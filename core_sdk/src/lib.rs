@@ -1,4 +1,4 @@
 mod api;
 pub mod sdk;
 mod constants;
-mod models;
+pub mod models;

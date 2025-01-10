@@ -1,7 +1,8 @@
 use crate::api::ApiClient;
 use crate::constants::REST_BASE_URL;
-use crate::models::todo::Todo;
+use crate::models::todo::TodoModel;
 use anyhow::{anyhow, Result};
+use log::info;
 use serde::Serialize;
 use serde_json::{from_str, json};
 use ureq::Response;
@@ -18,29 +19,30 @@ impl TodoSdk {
     Self { api_client }
   }
 
-  pub fn list(&self) -> Result<Vec<Todo>> {
+  pub fn list(&self) -> Result<Vec<TodoModel>> {
     let response = self.api_client.get("/todos", None)?;
     let body = response.into_string().map_err(|e| anyhow!(e))?;
-    let todos: Vec<Todo> = from_str(&body).map_err(|e| anyhow!(e))?;
+    let todos: Vec<TodoModel> = from_str(&body).map_err(|e| anyhow!(e))?;
     Ok(todos)
   }
-  pub fn get(&self, id: String) -> Result<Todo> {
+  pub fn get(&self, id: String) -> Result<TodoModel> {
     let response = self.api_client.get(&format!("{}/{}", "/todos", id), None)?;
     let body = response.into_string().map_err(|e| anyhow!(e))?;
-    let todo: Todo = from_str(&body).map_err(|e| anyhow!(e))?;
+    let todo: TodoModel = from_str(&body).map_err(|e| anyhow!(e))?;
     Ok(todo)
   }
-  pub fn add(&self, title: String, completed: Option<bool>) -> Result<Todo> {
-    let todo = Todo::new(title, completed);
+  pub fn add(&self, title: String, completed: Option<bool>) -> Result<TodoModel> {
+    let todo = TodoModel::new(title, completed);
     let response = self
       .api_client
       .post("/todos", None, Some(serde_json::to_string(&todo)?))?;
     let body = response.into_string().map_err(|e| anyhow!(e))?;
-    let created_todo: Todo = from_str(&body).map_err(|e| anyhow!(e))?;
+    info!("{:?}", body);
+    let created_todo: TodoModel = from_str(&body).map_err(|e| anyhow!(e))?;
     Ok(created_todo)
   }
 
-  pub fn edit(&self, id: String, title: String, completed: Option<bool>) -> Result<Todo> {
+  pub fn edit(&self, id: String, title: String, completed: Option<bool>) -> Result<TodoModel> {
     let mut todo = self.get(id.clone())?;
     todo.set_title(title);
     if let Some(completed) = completed {
@@ -54,7 +56,8 @@ impl TodoSdk {
     )?;
 
     let body = response.into_string().map_err(|e| anyhow!(e))?;
-    let updated_todo: Todo = serde_json::from_str(&body).map_err(|e| anyhow!(e))?;
+    info!("{:?}", body);
+    let updated_todo: TodoModel = serde_json::from_str(&body).map_err(|e| anyhow!(e))?;
     Ok(updated_todo)
   }
 

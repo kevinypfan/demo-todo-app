@@ -1,7 +1,11 @@
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "python")]
+use pyo3::prelude::*;
+
+#[cfg_attr(feature = "python", pyclass(get_all))]
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Todo {
+pub struct TodoModel {
   pub title: String,
   pub completed: Option<bool>,
   #[serde(rename = "_id")]
@@ -14,7 +18,19 @@ pub struct Todo {
   pub version: Option<i32>,
 }
 
-impl Todo {
+#[cfg(feature = "python")]
+#[pymethods]
+impl TodoModel {
+  fn __str__(&self) -> String {
+    format!("{:#?}", self)
+  }
+
+  fn __repr__(&self) -> String {
+    format!("{:#?}", self)
+  }
+}
+
+impl TodoModel {
   pub fn new(title: String, completed: Option<bool>) -> Self {
     Self {
       title,
@@ -26,12 +42,12 @@ impl Todo {
     }
   }
 
-  pub fn set_title(&mut self, title: String) -> &mut Todo {
+  pub fn set_title(&mut self, title: String) -> &mut TodoModel {
     self.title = title;
     self
   }
 
-  pub fn set_completed(&mut self, completed: bool) -> &mut Todo {
+  pub fn set_completed(&mut self, completed: bool) -> &mut TodoModel {
     self.completed = Some(completed);
     self
   }
@@ -54,7 +70,7 @@ mod tests {
             "__v": 0
         }"#;
 
-    let todo: Todo = serde_json::from_str(json_data).unwrap();
+    let todo: TodoModel = serde_json::from_str(json_data).unwrap();
 
     assert_eq!(todo.title, "Learn Docker");
     assert_eq!(todo.completed, Some(false));
@@ -72,7 +88,7 @@ mod tests {
 
   #[test]
   fn test_todo_serialize() {
-    let todo = Todo {
+    let todo = TodoModel {
       title: "Learn Docker".to_string(),
       completed: Some(false),
       id: Some("677fffd6e7bbb603a1a5c67e".to_string()),

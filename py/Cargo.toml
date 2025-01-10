@@ -1,0 +1,15 @@
+[package]
+name = "todo_app"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "todo_app"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.23.3", features = ["anyhow"] }
+core_sdk = { path = "../core_sdk", features = ["python"] }
+anyhow = "1.0.95"
+sysinfo = "0.33.1"
