@@ -30,6 +30,26 @@ wss.on('connection', (ws) => {
     ws.on('close', () => clients.delete(ws));
 });
 
+// 心跳事件：每 5 秒廣播一次
+const sendHeartbeat = () => {
+    const currentTime = Date.now(); // 取得當前時間（毫秒）
+    const heartbeatEvent = {
+        event: "heartbeat",
+        data: {
+            time: currentTime
+        }
+    };
+
+    clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(heartbeatEvent)); // 廣播心跳訊息
+        }
+    });
+};
+
+// 定時器：每 5 秒觸發一次心跳
+setInterval(sendHeartbeat, 5000);
+
 // Notify WebSocket clients
 const notifyClients = (event, data) => {
     clients.forEach((client) => {

@@ -1,0 +1,24 @@
+[package]
+edition = "2021"
+name = "todo_core"
+version = "0.0.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+# Default enable napi4 feature, see https://nodejs.org/api/n-api.html#node-api-version-matrix
+napi = { version = "2.13.3", default-features = false, features = ["napi4", "error_anyhow"] }
+napi-derive = "2.13.0"
+core_sdk = { path = "../core_sdk", features = ["js"] }
+serde = { version = "1.0.217", features = ["derive"] }
+anyhow = "1.0.95"
+
+
+[build-dependencies]
+napi-build = "2.0.1"
+
+[profile.release]
+lto = true
+strip = "symbols"
+

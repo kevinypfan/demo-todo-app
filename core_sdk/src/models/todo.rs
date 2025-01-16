@@ -3,16 +3,21 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 
+#[cfg(feature = "js")]
+use napi_derive::napi;
+
 #[cfg_attr(feature = "python", pyclass(get_all))]
+#[cfg_attr(feature = "js", napi(object))]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TodoModel {
   pub title: String,
+  #[serde(skip_serializing_if = "Option::is_none")]
   pub completed: Option<bool>,
-  #[serde(rename = "_id")]
+  #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
   pub id: Option<String>,
-  #[serde(rename = "createdAt")]
+  #[serde(rename = "createdAt", skip_serializing_if = "Option::is_none")]
   pub created_at: Option<String>,
-  #[serde(rename = "updatedAt")]
+  #[serde(rename = "updatedAt", skip_serializing_if = "Option::is_none")]
   pub updated_at: Option<String>,
   #[serde(rename = "__v", skip_serializing)]
   pub version: Option<i32>,
