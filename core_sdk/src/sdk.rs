@@ -1,4 +1,4 @@
-use crate::api::ApiClient;
+use crate::{api::ApiClient, constants::WS_BASE_URL};
 use crate::constants::REST_BASE_URL;
 use crate::models::todo::TodoModel;
 use anyhow::{anyhow, Result};
@@ -13,6 +13,11 @@ pub struct TodoSdk {
 }
 
 impl TodoSdk {
+
+  pub fn get_ws_url(&self) -> String {
+    WS_BASE_URL.to_string()
+  }
+
   pub fn new(base_url: Option<String>) -> Self {
     let base_url = base_url.unwrap_or(REST_BASE_URL.to_string());
     let api_client = ApiClient::new(base_url);

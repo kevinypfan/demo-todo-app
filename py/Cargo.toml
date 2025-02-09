@@ -13,3 +13,5 @@ pyo3 = { version = "0.23.3", features = ["anyhow"] }
 core_sdk = { path = "../core_sdk", features = ["python"] }
 anyhow = "1.0.95"
 sysinfo = "0.33.1"
+log = "0.4.22"
+url = "2.5.4"

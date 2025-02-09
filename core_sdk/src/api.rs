@@ -6,24 +6,12 @@ use ureq::{Agent, AgentBuilder, Response};
 pub struct ApiClient {
   agent: Agent,
   base_url: String,
-  access_token: String,
 }
 
 impl ApiClient {
   pub fn new(base_url: String) -> Self {
     let agent = AgentBuilder::new().build();
-    Self {
-      agent,
-      base_url,
-      access_token: String::new(),
-    }
-  }
-  pub fn set_token(&mut self, token: String) {
-    self.access_token = token;
-  }
-
-  pub(crate) fn check_token_empty(&self) -> bool {
-    self.access_token.is_empty()
+    Self { agent, base_url }
   }
 
   pub fn get(&self, path: &str, query_params: Option<String>) -> Result<Response> {
